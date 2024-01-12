@@ -1,0 +1,54 @@
+.breadcrumb {
+    background-color: transparent;
+    padding: .75rem 0rem;
+}
+
+.toolbar {
+    margin-bottom: 0.5rem;
+}
+
+.required-label::after {
+  content: "*";
+  color: red;
+  margin-left: 5px;
+}
+
+textarea {
+    resize: none;
+}
+
+.thumbnail-container {
+    position: relative;
+    width: 100%;
+    padding-top: 68.88%;
+    margin-bottom: 10px;
+}
+
+.thumbnail-container .img-div {
+   position:  absolute;
+   top: 0;
+   left: 0;
+   bottom: 0;
+   right: 0;
+   border: 1px solid #ced4da;
+   border-radius: 4px;
+}
+
+.thumbnail-container .img-div img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.invalid-feedback {
+  display: none;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 80%;
+  color: #dc3545;
+}
+
+.clear {
+    clear: both;
+}

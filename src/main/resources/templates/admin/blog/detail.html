@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout_admin :: main-fragment(
+                                                ~{:: title},
+                                                ~{:: #css-resources},
+                                                ~{:: #js-resources},
+                                                ~{:: #main-content}
+                                               )}">
+
+<head>
+    <title th:text="${post.title}"></title>
+
+    <th:block id="css-resources">
+        <!-- summernote -->
+        <link rel="stylesheet" th:href="@{/adminlte/plugins/summernote/summernote-bs4.css}">
+        <link rel="stylesheet" th:href="@{/adminlte/dist/css/modal_img.css}">
+    </th:block>
+</head>
+<body>
+<main id="main-content">
+    <!-- Breadcrumb -->
+    <div class="row">
+        <div class="col-12">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="/admin/posts">Danh sách bài viết</a></li>
+                <li class="breadcrumb-item active" th:text="${post.title}"></li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <a role="button" class="btn btn-default" href="/admin/posts">
+            <span class="fas fa-chevron-left" style="margin-right:0.5rem;"></span>
+            <span>Trở về</span>
+        </a>
+        <button class="btn btn-success btn-update-post">
+            <span class="fa fa-plus" style="margin-right:0.5rem;"></span>
+            <span>Cập nhật</span>
+        </button>
+        <button class="btn btn-danger float-right" data-toggle="modal" data-target="#modal-delete-post"><i class="fas fa-trash-alt"></i> Xóa</button>
+        <div class="clear"></div>
+    </div>
+
+    <!-- Main content -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-outline">
+                <div class="card-body pad">
+                    <div class="row">
+                        <div class="col-lg-9 col-md-8">
+                            <div class="form-group">
+                                <div>
+                                    <label class="required-label" for="title">Tiêu đề</label>
+                                    <span class="invalid-feedback" id="invalid-feedback-title">Độ dài tiêu đề từ 1 - 300 ký tự</span>
+                                </div>
+                                <input type="text" class="form-control" id="title" th:value="${post.title}">
+                            </div>
+                            <div class="form-group">
+                                <div>
+                                    <label class="required-label" for="content">Nội dung</label>
+                                    <span class="invalid-feedback" id="invalid-feedback-content">Nội dung bài viết trống</span>
+                                </div>
+                                <textarea th:text="${post.content}" class="textarea" id="content" name="content"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <div>
+                                    <label for="description">Mô tả</label>
+                                    <span class="invalid-feedback" id="invalid-feedback-description">Thêm mô tả trước khi công khai</span>
+                                </div>
+                                <textarea class="form-control" rows="4" name="description" id="description" th:text="${post.description}"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-4">
+                            <div class="form-group">
+                                <label for="status" class="required-label">Trạng thái</label>
+                                <select class="form-control" id="status">
+                                    <option value="0" th:selected="(${post.status} == 0)">Nháp</option>
+                                    <option value="1" th:selected="(${post.status} == 1)">Công khai</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="required-label">Ảnh thumbnail</label>
+                                <div class="thumbnail-container">
+                                    <div class="img-div">
+                                        <img id="preview-img" th:src="${(post.thumbnail != null && !#strings.isEmpty(post.thumbnail)) ? post.thumbnail : '/image/noimage.png'}" alt="Thumbnail post">
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="invalid-feedback" id="invalid-feedback-image">Upload ảnh trước khi công khai</span>
+                                </div>
+                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#choose-img-modal">
+                                    Chọn ảnh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal delete post -->
+    <div class="modal fade" id="modal-delete-post" tabindex="-1" role="dialog" aria-labelledby="modalDeletePost" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận xóa bài viết</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <span>Bạn chắc chắn muốn xóa bài viết?</span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-danger btn-delete-post">Xóa</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:replace="~{fragment/choose_img_modal :: choose-img-modal}"></th:block>
+</main>
+
+<th:block id="js-resources">
+    <!-- Summernote -->
+    <script th:src="@{/adminlte/plugins/summernote/summernote-bs4.min.js}"></script>
+    <!-- List js -->
+    <script th:src="@{/adminlte/plugins/list/list.min.js}"></script>
+    <!-- Modal img js -->
+    <script th:src="@{/adminlte/dist/js/modal_img.js}"></script>
+    <script th:inline="javascript">
+        $(function () {
+            $('#content').summernote(
+                {
+                    height: 450,
+                    focus: true
+                }
+            )
+
+            let imgs = [[${images}]];
+            let tmp = [];
+            for (img of imgs) {
+                tmp.push({"grid-item-img":img})
+            }
+            initListImg(tmp);
+        })
+
+        $('.btn-choose-img').click(function() {
+            let url = $('#list-user-img .grid-item.choosen .grid-item-img').attr('src');
+            if (url == "" || url == null) {
+                toastr.warning("Bạn chưa chọn ảnh");
+                return;
+            }
+            closeChooseImgModal();
+            $('#preview-img').attr('src', url);
+        })
+
+        $('.btn-update-post').click(function() {
+            $('.invalid-feedback').hide();
+            let title = $('#title').val();
+            let description = $('#description').val();
+            let content = $('#content').val();
+            let status = $('#status').val();
+            if (status != "0" && status != "1") {
+                toastr.warning("Trạng thái bài viết không hợp lệ");
+                return;
+            }
+            let image = $('#preview-img').attr('src');
+            isValid = true;
+
+            if (title.length == 0 || title.length > 300) {
+                $('#invalid-feedback-title').show();
+                isValid = false;
+            }
+
+            if (content.length == 0) {
+                $('#invalid-feedback-content').show();
+                isValid = false;
+            }
+
+            if (status == "1") {
+                if (description.length == 0) {
+                    $('#invalid-feedback-description').show();
+                    isValid = false;
+                }
+
+                if (image == "/image/noimage.png") {
+                    $('#invalid-feedback-image').show();
+                    isValid = false;
+                }
+            }
+
+            if (isValid) {
+                req = {
+                    title: title,
+                    content: content,
+                    description: description,
+                    status: parseInt(status),
+                    image: image
+                }
+                var myJSON = JSON.stringify(req);
+                $.ajax({
+                    url: '/api/admin/posts/'+[[${post.id}]],
+                    type: 'PUT',
+                    data: myJSON,
+                    contentType: "application/json; charset=utf-8",
+                    success: function(data) {
+                        toastr.success("Cập nhật bài viết thành công");
+                    },
+                    error: function(data) {
+                        toastr.warning(data.responseJSON.message);
+                    }
+                });
+            }
+        })
+
+        $('.btn-delete-post').click(function() {
+            $.ajax({
+                url: '/api/admin/posts/'+[[${post.id}]],
+                type: 'DELETE',
+                contentType: "application/json; charset=utf-8",
+                success: function(data) {
+                    toastr.success("Xóa bài viết thành công");
+                    setTimeout(function() {
+                        location.href = "/admin/posts/";
+                    }, 1000);
+                },
+                error: function(data) {
+                    toastr.warning(data.responseJSON.message);
+                },
+            });
+        })
+    </script>
+</th:block>
+</body>
+</html>
